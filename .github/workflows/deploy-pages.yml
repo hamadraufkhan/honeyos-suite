@@ -57,6 +57,12 @@ jobs:
             echo "No static output directory found (.output/public or dist)." >&2
             exit 1
           fi
+          if [ ! -f "pages/index.html" ] && [ -f "pages/index/index.html" ]; then
+            cp pages/index/index.html pages/index.html
+          fi
+          if [ ! -f "pages/index.html" ] && [ -f "pages/200.html" ]; then
+            cp pages/200.html pages/index.html
+          fi
           if [ ! -f "pages/index.html" ]; then
             echo "pages/index.html not found. Build output is not static-host compatible." >&2
             exit 1
