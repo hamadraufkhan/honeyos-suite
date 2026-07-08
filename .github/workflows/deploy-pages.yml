@@ -49,7 +49,9 @@ jobs:
         run: |
           rm -rf pages
           mkdir -p pages
-          if [ -f "dist/index.html" ]; then
+          if [ -f "dist/client/index.html" ]; then
+            cp -R dist/client/. pages/
+          elif [ -f "dist/index.html" ]; then
             cp -R dist/. pages/
           elif [ -d ".output/public" ]; then
             cp -R .output/public/. pages/
@@ -72,39 +74,8 @@ jobs:
             fi
           done
           if [ ! -f "pages/index.html" ]; then
-            entry_js=""
-            css_file=""
-            js_candidates=(pages/assets/index-*.js pages/assets/*.js)
-            css_candidates=(pages/assets/styles-*.css pages/assets/*.css)
-            for candidate in "${js_candidates[@]}"; do
-              if [ -f "$candidate" ]; then
-                entry_js="${candidate#pages/}"
-                break
-              fi
-            done
-            for candidate in "${css_candidates[@]}"; do
-              if [ -f "$candidate" ]; then
-                css_file="${candidate#pages/}"
-                break
-              fi
-            done
-            if [ -n "$entry_js" ]; then
-              {
-                echo '<!doctype html>'
-                echo '<html lang="en">'
-                echo '  <head>'
-                echo '    <meta charset="UTF-8" />'
-                echo '    <meta name="viewport" content="width=device-width, initial-scale=1.0" />'
-                if [ -n "$css_file" ]; then
-                  echo "    <link rel=\"stylesheet\" href=\"${BASE_PATH}${css_file}\" />"
-                fi
-                echo '    <title>HoneyOS</title>'
-                echo '  </head>'
-                echo '  <body>'
-                echo "    <script type=\"module\" src=\"${BASE_PATH}${entry_js}\"></script>"
-                echo '  </body>'
-                echo '</html>'
-              } > pages/index.html
+            if [ -f "pages/_shell.html" ]; then
+              cp pages/_shell.html pages/index.html
             fi
           fi
           if [ ! -f "pages/index.html" ]; then

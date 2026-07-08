@@ -13,6 +13,13 @@ export default defineConfig({
     base: basePath,
   },
   tanstackStart: {
-    static: true,
+    spa: {
+      enabled: true,
+      prerender: {
+        enabled: true,
+        outputPath: "/index.html",
+        crawlLinks: false,
+      },
+    },
   },
 });
