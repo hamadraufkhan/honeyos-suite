@@ -57,17 +57,23 @@ jobs:
             echo "No static output directory found (.output/public or dist)." >&2
             exit 1
           fi
-          if [ ! -f "pages/index.html" ] && [ -f "pages/${{ github.event.repository.name }}/index.html" ]; then
-            cp "pages/${{ github.event.repository.name }}/index.html" pages/index.html
-          fi
-          if [ ! -f "pages/index.html" ] && [ -f "pages/index/index.html" ]; then
-            cp pages/index/index.html pages/index.html
-          fi
-          if [ ! -f "pages/index.html" ] && [ -f "pages/200.html" ]; then
-            cp pages/200.html pages/index.html
-          fi
+          shopt -s nullglob globstar
+          for candidate in \
+            "pages/index.html" \
+            "pages/${{ github.event.repository.name }}/index.html" \
+            "pages/index/index.html" \
+            pages/**/index.html \
+            "pages/200.html"; do
+            if [ -f "$candidate" ]; then
+              cp "$candidate" pages/index.html
+              break
+            fi
+          done
           if [ ! -f "pages/index.html" ]; then
             echo "pages/index.html not found. Build output is not static-host compatible." >&2
+            echo "Dumping generated files for debugging:"
+            ls -la pages || true
+            find pages -maxdepth 5 -type f | sort || true
             exit 1
           fi
           cp pages/index.html pages/404.html
