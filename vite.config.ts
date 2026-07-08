@@ -14,17 +14,5 @@ export default defineConfig({
   },
   tanstackStart: {
     static: true,
-    prerender: {
-      enabled: true,
-      pages: [
-        {
-          path: "/",
-          prerender: {
-            enabled: true,
-            outputPath: "/index.html",
-          },
-        },
-      ],
-    },
   },
 });
