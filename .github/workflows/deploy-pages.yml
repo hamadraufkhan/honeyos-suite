@@ -57,6 +57,11 @@ jobs:
             echo "No static output directory found (.output/public or dist)." >&2
             exit 1
           fi
+          if [ ! -f "pages/index.html" ]; then
+            echo "pages/index.html not found. Build output is not static-host compatible." >&2
+            exit 1
+          fi
+          cp pages/index.html pages/404.html
           touch pages/.nojekyll
 
       - name: Setup Pages
