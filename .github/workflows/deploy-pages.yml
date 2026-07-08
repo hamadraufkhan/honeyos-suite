@@ -43,46 +43,20 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build site
-        run: bun run build
+        run: bun run build:pages
 
       - name: Prepare static artifact
         run: |
           rm -rf pages
           mkdir -p pages
-          if [ -f "dist/client/index.html" ]; then
-            cp -R dist/client/. pages/
-          elif [ -f "dist/index.html" ]; then
-            cp -R dist/. pages/
-          elif [ -d ".output/public" ]; then
-            cp -R .output/public/. pages/
-          elif [ -d "dist" ]; then
-            cp -R dist/. pages/
+          if [ -f "dist-pages/index.html" ]; then
+            cp -R dist-pages/. pages/
           else
-            echo "No static output directory found (.output/public or dist)." >&2
+            echo "dist-pages/index.html not found. Pages build failed." >&2
             exit 1
           fi
-          shopt -s nullglob globstar
-          for candidate in \
-            "pages/index.html" \
-            "pages/${{ github.event.repository.name }}/index.html" \
-            "pages/index/index.html" \
-            pages/**/index.html \
-            "pages/200.html"; do
-            if [ -f "$candidate" ]; then
-              cp "$candidate" pages/index.html
-              break
-            fi
-          done
           if [ ! -f "pages/index.html" ]; then
-            if [ -f "pages/_shell.html" ]; then
-              cp pages/_shell.html pages/index.html
-            fi
-          fi
-          if [ ! -f "pages/index.html" ]; then
-            echo "pages/index.html not found. Build output is not static-host compatible." >&2
-            echo "Dumping generated files for debugging:"
-            ls -la pages || true
-            find pages -maxdepth 5 -type f | sort || true
+            echo "pages/index.html not found after copy." >&2
             exit 1
           fi
           cp pages/index.html pages/404.html

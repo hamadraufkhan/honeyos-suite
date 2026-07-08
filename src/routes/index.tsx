@@ -48,7 +48,7 @@ function TrafficLights() {
   );
 }
 
-function Index() {
+export function Index() {
   return (
     <div className="min-h-screen bg-honey-50 font-sans text-honey-900">
       {/* NAV */}
